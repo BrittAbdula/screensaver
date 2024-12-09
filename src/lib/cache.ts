@@ -1,23 +1,31 @@
-type CacheEntry<T> = {
-  data: T;
-  timestamp: number;
-};
+// interface Album {
+//   id: string
+//   title: string
+//   artist: string
+//   cover: string
+//   spotifyUrl: string
+// }
 
-const cache = new Map<string, CacheEntry<any>>();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
+// type CacheEntry<T> = {
+//   data: T;
+//   timestamp: number;
+// };
 
-export async function getCachedData<T>(
-  key: string,
-  fetcher: () => Promise<T>
-): Promise<T> {
-  const cached = cache.get(key);
-  const now = Date.now();
+// const cache = new Map<string, CacheEntry<any>>();
+// const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes in milliseconds
 
-  if (cached && now - cached.timestamp < CACHE_DURATION) {
-    return cached.data;
-  }
+// export async function getCachedData<T>(
+//   key: string,
+//   fetcher: () => Promise<T>
+// ): Promise<T> {
+//   const cached = cache.get(key);
+//   const now = Date.now();
 
-  const data = await fetcher();
-  cache.set(key, { data, timestamp: now });
-  return data;
-}
+//   if (cached && now - cached.timestamp < CACHE_DURATION) {
+//     return cached.data;
+//   }
+
+//   const data = await fetcher();
+//   cache.set(key, { data, timestamp: now });
+//   return data;
+// }

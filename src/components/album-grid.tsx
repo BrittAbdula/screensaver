@@ -15,8 +15,13 @@ interface AlbumGridProps {
   initialAlbums: Album[]
 }
 
+interface FullscreenDocument extends Document {
+  webkitFullscreenElement?: Element | null;
+  mozFullScreenElement?: Element | null;
+  msFullscreenElement?: Element | null;
+}
+
 export default function AlbumGrid({ initialAlbums }: AlbumGridProps) {
-  const [albums, setAlbums] = useState<Album[]>(initialAlbums)
   const [flippedAlbums, setFlippedAlbums] = useState<string[]>([])
   const [flipDirections, setFlipDirections] = useState<Record<string, number>>({})
   const [backAlbums, setBackAlbums] = useState<Record<string, Album>>({})
@@ -30,8 +35,8 @@ export default function AlbumGrid({ initialAlbums }: AlbumGridProps) {
   }, [])
 
   const getRandomAlbum = (excludeId: string) => {
-    const availableAlbums = albums.filter(a => a.id !== excludeId)
-    return availableAlbums[Math.floor(Math.random() * availableAlbums.length)]
+    const availableAlbums = initialAlbums.filter(a => a.id !== excludeId)
+    return availableAlbums[Math.floor(Math.random() * initialAlbums.length)]
   }
 
   // Calculate number of albums to show based on screen size
@@ -55,14 +60,14 @@ export default function AlbumGrid({ initialAlbums }: AlbumGridProps) {
       const totalAlbums = rows * columns
 
       // Get random albums from the initial set
-      const shuffled = [...albums].sort(() => 0.5 - Math.random())
+      const shuffled = [...initialAlbums].sort(() => 0.5 - Math.random())
       setVisibleAlbums(shuffled.slice(0, totalAlbums))
     }
 
     calculateVisibleAlbums()
     window.addEventListener('resize', calculateVisibleAlbums)
     return () => window.removeEventListener('resize', calculateVisibleAlbums)
-  }, [albums])
+  }, [initialAlbums])
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -91,9 +96,9 @@ export default function AlbumGrid({ initialAlbums }: AlbumGridProps) {
     const handleFullscreenChange = () => {
       const isFullscreenNow = !!(
         document.fullscreenElement ||
-        (document as any).webkitFullscreenElement ||
-        (document as any).mozFullScreenElement ||
-        (document as any).msFullscreenElement
+        (document as FullscreenDocument).webkitFullscreenElement ||
+        (document as FullscreenDocument).mozFullScreenElement ||
+        (document as FullscreenDocument).msFullscreenElement
       );
       console.log('Fullscreen changed:', isFullscreenNow);
       setIsFullscreen(isFullscreenNow);
