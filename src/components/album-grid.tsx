@@ -176,12 +176,6 @@ export default function AlbumGrid({ initialAlbums }: AlbumGridProps) {
                     transformStyle: "preserve-3d",
                     cursor: "pointer",
                   }}
-                  onClick={() => {
-                    const targetAlbum = flippedAlbums.includes(album.id) && backAlbum
-                      ? backAlbum
-                      : album
-                    window.open(targetAlbum.spotifyUrl, '_blank')
-                  }}
                 >
                   {/* Front of card */}
                   <MotionDiv
@@ -196,6 +190,12 @@ export default function AlbumGrid({ initialAlbums }: AlbumGridProps) {
                       src={album.cover}
                       alt={album.title}
                       className="w-full h-full object-cover"
+                      onClick={() => {
+                        const targetAlbum = flippedAlbums.includes(album.id) && backAlbum
+                          ? backAlbum
+                          : album
+                        window.open(targetAlbum.spotifyUrl, '_blank')
+                      }}
                     />
                   </MotionDiv>
 
@@ -223,10 +223,9 @@ export default function AlbumGrid({ initialAlbums }: AlbumGridProps) {
           )
         })}
       </div>
-      <footer 
-        className={`fixed bottom-0 left-0 right-0 p-4 text-center text-white/50 text-sm bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 ${
-          isFullscreen ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
+      <footer
+        className={`fixed bottom-0 left-0 right-0 p-4 text-center text-white/50 text-sm bg-gradient-to-t from-black/80 to-transparent transition-opacity duration-300 ${isFullscreen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
         onClick={toggleFullscreen}
         style={{ cursor: 'pointer' }}
       >

@@ -15,7 +15,7 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: 'Album Screensaver',
-  description: 'A beautiful screensaver displaying latest album artworks from Spotify, perfect for ambient displays.',
+  description: 'A beautiful screensaver displaying latest album artworks from Spotify, perfect for ambient displays.Also very suitable as a background wall for live broadcasts or video recording',
   keywords: ['screensaver', 'spotify', 'album art', 'music', 'ambient display'],
   authors: [{ name: 'auroroa' }],
   colorScheme: 'dark',
