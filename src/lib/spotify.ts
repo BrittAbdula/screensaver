@@ -87,3 +87,42 @@ export const getNewReleases = async (market: string = 'US') => {
     }
 //   })
 }
+
+
+export const getUserSavedAlbums = async (accessToken: string) => {
+  try {
+    const response = await fetch('https://api.spotify.com/v1/me/albums?limit=50', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch user albums')
+    }
+
+    const data = await response.json()
+    return data.items.map((album: SpotifyAlbum) => ({
+      id: album.id,
+      title: album.name,
+      artist: album.artists[0].name,
+      cover: album.images[2].url,
+      spotifyUrl: `https://open.spotify.com/album/${album.id}`,
+    }))
+  } catch (error) {
+    console.error('Error fetching user albums:', error)
+    return []
+  }
+}
+
+export const getSpotifyAuthUrl = () => {
+  const params = new URLSearchParams({
+    client_id: process.env.SPOTIFY_CLIENT_ID!,
+    response_type: 'code',
+    redirect_uri: 'https://screensaver-lyart.vercel.app/callback',
+    scope: 'user-library-read',
+  })
+
+  return `https://accounts.spotify.com/authorize?${params.toString()}`
+}

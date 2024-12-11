@@ -1,5 +1,5 @@
 import { headers } from 'next/headers'
-import AlbumGrid from "@/components/album-grid"
+import {AlbumGrid} from "@/components/album-grid"
 import { getNewReleases } from "@/lib/spotify"
 
 const VALID_MARKETS = new Set([
