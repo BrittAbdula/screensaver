@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { motion } from "framer-motion"
 import { Settings, Grid, Home } from "lucide-react"
+import { Logo } from "@/components/ui/logo"
 
 export function Header() {
   const pathname = usePathname()
@@ -35,12 +36,8 @@ export function Header() {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          <Link 
-            href="/" 
-            className="font-light tracking-widest text-xl bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/90 to-primary/80 hover:opacity-80 transition-opacity"
-          >
-            <span className="font-extralight">Flip</span>
-            <span className="font-medium">Verse</span>
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <Logo />
           </Link>
 
           <nav className="flex items-center gap-1">
