@@ -1,69 +1,74 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Header } from "@/components/layout/header";
+import {cn} from "@/lib/utils";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' }
+  ],
+}
 
 export const metadata: Metadata = {
-  title: 'Album Screensaver',
-  description: 'A beautiful screensaver displaying latest album artworks from Spotify, perfect for ambient displays.Also very suitable as a background wall for live broadcasts or video recording',
-  keywords: ['screensaver', 'spotify', 'album art', 'music', 'ambient display'],
-  authors: [{ name: 'auroroa' }],
-  colorScheme: 'dark',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
-  themeColor: '#000000',
-  // manifest: '/manifest.json',
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
-  },
+  title: 'FlipVerse',
+  description: 'A beautiful digital art gallery that brings your favorite album artworks to life. Perfect for ambient displays and creating immersive visual experiences.',
+  keywords: ['flipverse', 'flip-verse', 'digital art', 'gallery', 'album art', 'ambient display', 'screensaver', 'visual experience'],
+  authors: [{ name: 'FlipVerse Team' }],
+  metadataBase: new URL('https://flip-verse.com'),
   openGraph: {
+    title: 'FlipVerse - Digital Art Gallery',
+    description: 'Transform your screen into a living art gallery with FlipVerse',
+    url: 'https://flip-verse.com',
+    siteName: 'FlipVerse',
+    locale: 'en_US',
     type: 'website',
-    title: 'Album Screensaver',
-    description: 'A beautiful screensaver displaying latest album artworks from Spotify.',
-    siteName: 'Album Screensaver',
-    images: [
-      {
-        url: '/og.png',
-        width: 1200,
-        height: 630,
-        alt: 'Album Screensaver Preview',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Album Screensaver',
-    description: 'A beautiful screensaver displaying latest album artworks from Spotify.',
-    images: ['/x.png'],
+    title: 'FlipVerse - Digital Art Gallery',
+    description: 'Transform your screen into a living art gallery with FlipVerse',
+    creator: '@flipverse',
   },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-icon.png',
+  },
+  category: 'technology'
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+    <html lang="en" className="dark">
+      <body className={cn(
+        "min-h-screen bg-background font-sans antialiased overflow-x-hidden",
+        geistSans.variable
+      )}>
+        <div className="relative flex min-h-screen flex-col">
+          <Header />          
+          <div className="flex-1 pt-14">
+            {children}
+          </div>
+        </div>
       </body>
     </html>
-  );
+  )
 }

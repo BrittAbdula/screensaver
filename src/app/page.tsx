@@ -1,54 +1,37 @@
-import { headers } from 'next/headers'
-import {AlbumGrid} from "@/components/album-grid"
-import { getNewReleases } from "@/lib/spotify"
+"use client"
 
-const VALID_MARKETS = new Set([
-  "AR", "AU", "AT", "BE", "BO", "BR", "BG", "CA", "CL", "CO", "CR", "CY", "CZ",
-  "DK", "DO", "DE", "EC", "EE", "SV", "FI", "FR", "GR", "GT", "HN", "HK", "HU",
-  "IS", "IE", "IT", "LV", "LT", "LU", "MY", "MT", "MX", "NL", "NZ", "NI", "NO",
-  "PA", "PY", "PE", "PH", "PL", "PT", "SG", "SK", "ES", "SE", "CH", "TW", "TR",
-  "UY", "US", "GB", "AD", "LI", "MC", "ID", "JP", "TH", "VN", "RO", "IL", "ZA",
-  "SA", "AE", "BH", "QA", "OM", "KW", "EG", "MA", "DZ", "TN", "LB", "JO", "PS",
-  "IN", "KZ", "MD", "UA", "AL", "BA", "HR", "ME", "MK", "RS", "SI", "KR", "BD",
-  "PK", "LK", "GH", "KE", "NG", "TZ", "UG", "AG", "AM", "BS", "BB", "BZ", "BT",
-  "BW", "BF", "CV", "CW", "DM", "FJ", "GM", "GE", "GD", "GW", "GY", "HT", "JM",
-  "KI", "LS", "LR", "MW", "MV", "ML", "MH", "FM", "NA", "NR", "NE", "PW", "PG",
-  "WS", "SM", "ST", "SN", "SC", "SL", "SB", "KN", "LC", "VC", "SR", "TL", "TO",
-  "TT", "TV", "VU", "AZ", "BN", "BI", "KH", "CM", "TD", "KM", "GQ", "SZ", "GA",
-  "GN", "KG", "LA", "MO", "MR", "MN", "NP", "RW", "TG", "UZ", "ZW", "BJ", "MG",
-  "MU", "MZ", "AO", "CI", "DJ", "ZM", "CD", "CG", "IQ", "LY", "TJ", "VE", "ET", "XK"
-])
+import { HeroSection } from "@/components/landing/hero-section"
+import { FeaturesSection } from "@/components/landing/features-section"
+import { useTrendingAlbums } from "@/hooks/use-albums"
+import { Loader2 } from "lucide-react"
 
-function getMarketFromLanguage(acceptLanguage: string | null): string {
-  if (!acceptLanguage) return 'US'
+export default function Home() {
+  const market = typeof window !== 'undefined' 
+    ? navigator.language.split('-')[1]?.toUpperCase() || 'US'
+    : 'US'
   
-  // Parse the Accept-Language header
-  const languages = acceptLanguage.split(',')
-  for (const lang of languages) {
-    // Get the country code from the language tag
-    const country = lang.trim().split('-')[1]?.toUpperCase()
-    if (country && VALID_MARKETS.has(country)) {
-      return country
-    }
+  const { albums, isLoading, error } = useTrendingAlbums(market)
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-8 h-8 animate-spin" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen text-red-500">
+        Error loading albums: {error.message}
+      </div>
+    )
   }
   
-  // If no valid market is found, return US as default
-  return 'US'
-}
-
-export default async function Home() {
-  const headersList = await headers()
-  const acceptLanguage = headersList.get('accept-language')
-  const market = getMarketFromLanguage(acceptLanguage)
-  
-  const albums = await getNewReleases(market)
-  console.log("--->Accept-Language:", acceptLanguage)
-  console.log("--->Selected-market:", market)
-  console.log("--->getNewReleases:", albums.length)
-  
   return (
-    <main>
-      <AlbumGrid initialAlbums={albums} />
+    <main className="min-h-screen bg-background">
+      <HeroSection albums={albums} />
+      <FeaturesSection />
     </main>
   )
 }
