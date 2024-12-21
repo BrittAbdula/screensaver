@@ -99,7 +99,7 @@ export default function ScreenSaver() {
     }`}>
       <button
         onClick={toggleFullscreen}
-        className={`fixed bottom-4 right-4 flex items-center space-x-2 px-4 py-1.5 bg-primary/90 hover:bg-primary text-primary-foreground text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 z-50 ${
+        className={`fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center space-x-2 px-6 py-2.5 bg-primary/90 hover:bg-primary text-primary-foreground text-sm font-medium rounded-full transition-all duration-300 transform hover:scale-105 z-50 ${
           isFullscreen && !isControlsVisible ? 'opacity-0' : 'opacity-100'
         }`}
       >
