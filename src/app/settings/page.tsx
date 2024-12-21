@@ -224,8 +224,9 @@ export default function SettingsPage() {
                             className="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer"
                           />
                           <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                            <span>2</span>
-                            <span>8</span>
+                            {Array.from({ length: 7 }, (_, i) => i + 2).map((num) => (
+                              <span key={num}>{num}</span>
+                            ))}
                           </div>
                         </div>
 
@@ -247,8 +248,9 @@ export default function SettingsPage() {
                             className="w-full h-2 bg-primary/20 rounded-lg appearance-none cursor-pointer"
                           />
                           <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                            <span>1s</span>
-                            <span>5s</span>
+                            {Array.from({ length: 5 }, (_, i) => i + 1).map((num) => (
+                              <span key={num}>{num}s</span>
+                            ))}
                           </div>
                         </div>
                       </div>

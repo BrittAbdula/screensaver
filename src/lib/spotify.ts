@@ -42,52 +42,100 @@ interface SpotifyAlbum {
   }>;
 }
 
-export const getNewReleases = async (market: string = 'US') => {
-//   return getCachedData(`spotify-new-releases-${market}`, async () => {
-    try {
-      const tokenData = await getAccessToken()
-      // console.log('Got access token:', tokenData.access_token ? 'Yes' : 'No')
+// 生成默认专辑数据
+const generateDefaultAlbums = async (market: string) => {
+  const defaultPlaylists = [
+    { id: '37i9dQZEVXbNG2KDcFcKOF', name: 'Top 50 Global' },
+    { id: '37i9dQZF1DX4JAvHpjipBk', name: 'New Music Friday' },
+    { id: '37i9dQZF1DX0XUsuxWHRQd', name: 'RapCaviar' },
+    { id: '37i9dQZF1DX4dyzvuaRJ0n', name: 'Electronic/Dance' },
+  ]
 
-      const url = `https://api.spotify.com/v1/browse/new-releases?limit=50&market=${market}`
-      // console.log('Fetching new releases from:', url)
-
-      const response = await fetch(url, {
-        headers: {
-          Authorization: `Bearer ${tokenData.access_token}`,
-          'Accept': 'application/json',
-        },
-      })
+  try {
+    const tokenData = await getAccessToken()
+    const playlistPromises = defaultPlaylists.map(async (playlist) => {
+      const response = await fetch(
+        `https://api.spotify.com/v1/playlists/${playlist.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${tokenData.access_token}`,
+          },
+        }
+      )
 
       if (!response.ok) {
-        const errorText = await response.text()
-        throw new Error(`Spotify API error: ${response.status} ${response.statusText}\n${errorText}`)
+        throw new Error(`Failed to fetch playlist ${playlist.name}`)
       }
 
       const data = await response.json()
-      // console.log('Spotify API response:', data)
-
-      if (!data.albums?.items) {
-        throw new Error('No albums found in response')
+      return {
+        id: data.id,
+        title: data.name,
+        artist: 'Spotify',
+        cover: data.images[0].url,
+        spotifyUrl: `https://open.spotify.com/playlist/${data.id}`,
       }
-      // console.log('----Spotify API response:', data.albums[0])
+    })
 
-      const albums = data.albums.items.map((album: SpotifyAlbum) => ({
-        id: album.id,
-        title: album.name,
-        artist: album.artists[0].name,
-        cover: album.images[2].url,
-        spotifyUrl: `https://open.spotify.com/album/${album.id}`,
-      }))
-
-      // console.log('Processed albums:', albums.map(a => ({ id: a.id, url: a.spotifyUrl })))
-      return albums
-    } catch (error) {
-      console.error('Error fetching new releases:', error)
-      return []
-    }
-//   })
+    return await Promise.all(playlistPromises)
+  } catch (error) {
+    console.error('Error generating default albums:', error)
+    return []
+  }
 }
 
+export const getNewReleases = async (market: string = 'US') => {
+  try {
+    const tokenData = await getAccessToken()
+
+    const url = `https://api.spotify.com/v1/browse/new-releases?limit=50&market=${market}`
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${tokenData.access_token}`,
+        'Accept': 'application/json',
+      },
+    })
+
+    if (!response.ok) {
+      // 如果获取新发行失败，尝试获取默认专辑
+      const defaultAlbums = await generateDefaultAlbums(market)
+      if (defaultAlbums.length > 0) {
+        return defaultAlbums
+      }
+      throw new Error(`Spotify API error: ${response.status} ${response.statusText}`)
+    }
+
+    const data = await response.json()
+
+    if (!data.albums?.items) {
+      // 如果没有找到专辑，使用默认专辑
+      const defaultAlbums = await generateDefaultAlbums(market)
+      if (defaultAlbums.length > 0) {
+        return defaultAlbums
+      }
+      throw new Error('No albums found in response')
+    }
+
+    const albums = data.albums.items.map((album: SpotifyAlbum) => ({
+      id: album.id,
+      title: album.name,
+      artist: album.artists[0].name,
+      cover: album.images[2].url,
+      spotifyUrl: `https://open.spotify.com/album/${album.id}`,
+    }))
+
+    // console.log('Processed albums:', albums.map(a => ({ id: a.id, url: a.spotifyUrl })))
+    return albums
+  } catch (error) {
+    console.error('Error fetching new releases:', error)
+    // 最后尝试获取默认专辑
+    const defaultAlbums = await generateDefaultAlbums(market)
+    if (defaultAlbums.length > 0) {
+      return defaultAlbums
+    }
+    throw error
+  }
+}
 
 export const getUserSavedAlbums = async (accessToken: string) => {
   try {
